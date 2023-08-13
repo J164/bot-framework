@@ -1,6 +1,18 @@
 {
-  "name": "bot-framework",
+  "name": "@j164/bot-framework",
   "version": "0.1.0",
+  "author": {
+    "name": "Jacob Edley",
+    "email": "edleyjacob@gmail.com",
+    "url": "https://github.com/J164"
+  },
+  "description": "A framework for building Discord bots using discord.js",
+  "homepage": "https://github.com/J164/bot-framework",
+  "license": "MIT",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/J164/bot-framework"
+  },
   "private": true,
   "type": "module",
   "module": "./build/index.js",
@@ -31,7 +43,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm ci --omit=optional && npm run build",
     "lint": "xo",
     "test": "vitest run --coverage"
   },
