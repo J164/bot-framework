@@ -30,14 +30,14 @@ export type ChatInputCommandHandler<AllowedInDm extends boolean> = {
 export type ApplicationCommandHandler = ChatInputCommandHandler<boolean>;
 export type ApplicationCommandHandlers = Record<string, ApplicationCommandHandler>;
 
-export type TaskContext = { readonly task: ScheduledTask; readonly fetchCollection: CollectionFetcher };
-type CommandContext = { readonly logger: Logger; readonly fetchCollection: CollectionFetcher };
+export type TaskContext = { readonly client: BotClient; readonly task: ScheduledTask; readonly fetchCollection: CollectionFetcher };
+export type CommandContext = { readonly client: BotClient; readonly commandLogger: Logger; readonly fetchCollection: CollectionFetcher };
 
 export type ChatInputCommand<T extends CacheType> = Omit<InteractionResponse, 'interaction'> & {
 	interaction: ChatInputCommandInteraction<T>;
 };
 
-export type BotClient = { readonly client: Client; readonly logger: Logger };
+export type BotClient = { readonly client: Client; readonly globalLogger: Logger };
 
 export async function startBot(options: {
 	token: string;
@@ -47,7 +47,7 @@ export async function startBot(options: {
 }): Promise<void> {
 	const { token, clientOptions, commandHandlers, taskHandlers } = options;
 
-	const context: Omit<BotClient, 'client'> & { client?: Client } = { logger: pino() };
+	const context: Omit<BotClient, 'client'> & { client?: Client } = { globalLogger: pino() };
 	context.client = new Client(clientOptions)
 		.once('ready', onReady.bind(context as BotClient, taskHandlers))
 		.on('interactionCreate', onInteractionCreate.bind(context as BotClient, commandHandlers));
