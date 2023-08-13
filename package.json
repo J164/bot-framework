@@ -1,0 +1,58 @@
+{
+  "name": "bot-framework",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.5.0"
+  },
+  "dependencies": {
+    "discord.js": "14.12.1",
+    "mongodb": "5.7.0",
+    "node-cron": "3.0.2",
+    "pino": "8.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.4.9",
+    "@types/node-cron": "3.0.8",
+    "@vitest/coverage-v8": "0.34.1",
+    "mongodb-memory-server": "8.14.0",
+    "typescript": "5.1.6",
+    "vitest": "0.34.1",
+    "xo": "0.55.1"
+  },
+  "optionalDependencies": {
+    "bufferutil": "4.0.7",
+    "utf-8-validate": "6.0.3",
+    "zlib-sync": "0.1.8"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "xo",
+    "deploy": "node build/deploy/deploy.js",
+    "test": "vitest run --coverage"
+  },
+  "prettier": {
+    "bracketSpacing": true,
+    "printWidth": 160
+  },
+  "xo": {
+    "prettier": true,
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:@typescript-eslint/recommended-requiring-type-checking",
+      "plugin:unicorn/recommended"
+    ],
+    "rules": {
+      "default-case": "off",
+      "no-return-assign": "off",
+      "@typescript-eslint/explicit-function-return-type": "error",
+      "@typescript-eslint/naming-convention": "off",
+      "@typescript-eslint/no-implicit-any-catch": "off",
+      "@typescript-eslint/switch-exhaustiveness-check": "warn",
+      "import/no-extraneous-dependencies": "off",
+      "unicorn/prevent-abbreviations": "off"
+    }
+  }
+}
