@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "module": "./build/index.js",
+  "files": ["build/"],
   "engines": {
     "node": ">=20.5.0"
   },
@@ -28,8 +30,8 @@
   },
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "lint": "xo",
-    "deploy": "node build/deploy/deploy.js",
     "test": "vitest run --coverage"
   },
   "prettier": {
