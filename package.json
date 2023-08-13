@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "module": "./build/index.js",
+  "types": "./build/index.d.ts",
   "files": ["build/"],
   "engines": {
     "node": ">=20.5.0"

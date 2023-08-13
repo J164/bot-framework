@@ -7,25 +7,16 @@ import {
 	type ClientOptions,
 } from 'discord.js';
 import { pino, type Logger } from 'pino';
-import { type ScheduleOptions } from 'node-cron';
-import { type HandlerContext, onReady } from './event-handlers/ready.js';
+import { type ScheduledTask, type ScheduleOptions } from 'node-cron';
+import { onReady } from './event-handlers/ready.js';
 import { onInteractionCreate } from './event-handlers/interaction-create.js';
 import { type CollectionFetcher } from './database.js';
 
 export type Task = {
 	readonly cronExpression: string;
-	readonly handler: (this: HandlerContext) => void;
+	readonly handler: (this: TaskContext) => void;
 	readonly scheduleOptions: ScheduleOptions & { name: string };
 };
-
-export type ChatInputCommand<T extends CacheType> = Omit<InteractionResponse, 'interaction'> & {
-	interaction: ChatInputCommandInteraction<T>;
-};
-
-type ApplicationCommandHandler = ChatInputCommandHandler<boolean>;
-export type ApplicationCommandHandlers = Record<string, ApplicationCommandHandler>;
-
-type CommandContext = { logger: Logger; fetchCollection: CollectionFetcher };
 
 export type ChatInputCommandHandler<AllowedInDm extends boolean> = {
 	readonly respond: (response: ChatInputCommand<AllowedInDm extends true ? CacheType : 'cached'>, commandContext: CommandContext) => Promise<void>;
@@ -36,7 +27,17 @@ export type ChatInputCommandHandler<AllowedInDm extends boolean> = {
 	readonly type: 'chatInputCommand';
 };
 
-export type BotClient = { client: Client; logger: Logger };
+export type ApplicationCommandHandler = ChatInputCommandHandler<boolean>;
+export type ApplicationCommandHandlers = Record<string, ApplicationCommandHandler>;
+
+export type TaskContext = { readonly task: ScheduledTask; readonly fetchCollection: CollectionFetcher };
+type CommandContext = { readonly logger: Logger; readonly fetchCollection: CollectionFetcher };
+
+export type ChatInputCommand<T extends CacheType> = Omit<InteractionResponse, 'interaction'> & {
+	interaction: ChatInputCommandInteraction<T>;
+};
+
+export type BotClient = { readonly client: Client; readonly logger: Logger };
 
 export async function startBot(options: {
 	token: string;

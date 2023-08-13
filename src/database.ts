@@ -2,12 +2,12 @@ import { type Collection, type CreateCollectionOptions, type IndexDescription, t
 
 export type CollectionFetcher = typeof fetchCollection;
 
-type UnpromotedCollectionOptions = { promoteLongs: false; promoteValues: false; promoteBuffers: false };
+type UnpromotedCollectionOptions = { readonly promoteLongs: false; readonly promoteValues: false; readonly promoteBuffers: false };
 
-type MongoCollectionOptions = {
-	baseOptions: CollectionOptions & UnpromotedCollectionOptions;
-	createOptions: CreateCollectionOptions & UnpromotedCollectionOptions & { validator: Document };
-	indexOptions: IndexDescription[];
+export type MongoCollectionOptions = {
+	readonly baseOptions: CollectionOptions & UnpromotedCollectionOptions;
+	readonly createOptions: CreateCollectionOptions & UnpromotedCollectionOptions & { validator: Document };
+	readonly indexOptions: IndexDescription[];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
