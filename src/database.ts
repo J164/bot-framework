@@ -18,7 +18,7 @@ export type MongoCollectionOptions = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Database = { client: MongoClient; db: Db; collectionNames: string[]; collections: Record<string, Collection<any>> };
+export type Database = { client: MongoClient; db: Db; collectionNames: string[]; collections: Record<string, Collection<any>> };
 
 export async function fetchCollection<T extends Document>(this: Database, name: string, options: MongoCollectionOptions): Promise<Collection<T>> {
 	const { baseOptions, createOptions, indexOptions } = options;

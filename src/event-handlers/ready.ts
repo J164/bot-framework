@@ -7,7 +7,7 @@ export function onReady(this: BotClient, taskHandlers: Task[]): void {
 			botClient: this,
 			taskLogger: this.globalLogger.child({ type: 'task', taskName: scheduleOptions.name }),
 		};
-		info.task = schedule(cronExpression, handler.bind(info as TaskContext), scheduleOptions);
+		info.task = schedule(cronExpression, handler.bind(undefined, info as TaskContext), scheduleOptions);
 	}
 
 	this.globalLogger.info('Login success!');

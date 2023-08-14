@@ -15,7 +15,7 @@ import { type MongoCollectionOptions, fetchCollection } from './database.js';
 
 export type Task = {
 	readonly cronExpression: string;
-	readonly handler: (this: TaskContext) => void;
+	readonly handler: (context: TaskContext) => void;
 	readonly scheduleOptions: ScheduleOptions & { name: string };
 };
 
