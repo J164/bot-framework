@@ -27,7 +27,7 @@ async function handleChatInputCommand(interaction: ChatInputCommandInteraction, 
 		options: interaction.options,
 	});
 
-	const context: CommandContext = { client, commandLogger, fetchCollection };
+	const context: CommandContext = { botClient: client, commandLogger, fetchCollection };
 
 	if (!handler.allowedInDm) {
 		if (!interaction.inCachedGuild()) {

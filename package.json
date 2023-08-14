@@ -17,6 +17,10 @@
   "module": "./build/index.js",
   "types": "./build/index.d.ts",
   "files": ["build/"],
+  "exports": {
+    "import": "./build/index.js",
+    "types": "./build/index.d.ts"
+  },
   "engines": {
     "node": ">=20.5.0"
   },

@@ -30,8 +30,8 @@ export type ChatInputCommandHandler<AllowedInDm extends boolean> = {
 export type ApplicationCommandHandler = ChatInputCommandHandler<boolean>;
 export type ApplicationCommandHandlers = Record<string, ApplicationCommandHandler>;
 
-export type TaskContext = { readonly client: BotClient; readonly task: ScheduledTask; readonly fetchCollection: CollectionFetcher };
-export type CommandContext = { readonly client: BotClient; readonly commandLogger: Logger; readonly fetchCollection: CollectionFetcher };
+export type TaskContext = { readonly botClient: BotClient; readonly task: ScheduledTask; readonly fetchCollection: CollectionFetcher };
+export type CommandContext = { readonly botClient: BotClient; readonly commandLogger: Logger; readonly fetchCollection: CollectionFetcher };
 
 export type ChatInputCommand<T extends CacheType> = Omit<InteractionResponse, 'interaction'> & {
 	interaction: ChatInputCommandInteraction<T>;

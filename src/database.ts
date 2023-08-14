@@ -1,4 +1,4 @@
-import { type Collection, type CreateCollectionOptions, type IndexDescription, type Document, type Db, type CollectionOptions } from 'mongodb';
+import { type Collection, type CreateCollectionOptions, type IndexDescription, type Document, type Db, type CollectionOptions, MongoClient } from 'mongodb';
 
 export type CollectionFetcher = typeof fetchCollection;
 
@@ -10,12 +10,18 @@ export type MongoCollectionOptions = {
 	readonly indexOptions: IndexDescription[];
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const collections: Record<string, Collection<any>> = {};
+let client: MongoClient | undefined;
+let database: Db | undefined;
 let collectionNames: string[] | undefined;
 
-export async function fetchCollection<T extends Document>(name: string, database: Db, options: MongoCollectionOptions): Promise<Collection<T>> {
-	if (!collectionNames) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const collections: Record<string, Collection<any>> = {};
+
+export async function fetchCollection<T extends Document>(name: string, url: string, options: MongoCollectionOptions): Promise<Collection<T>> {
+	if (!database || !collectionNames) {
+		client ??= new MongoClient(url);
+		await client.connect();
+		database ??= client.db();
 		collectionNames = await database
 			.listCollections()
 			.map((info) => {
