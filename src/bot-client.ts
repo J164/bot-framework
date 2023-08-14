@@ -38,7 +38,7 @@ export type ChatInputCommand<T extends CacheType> = Omit<InteractionResponse, 'i
 	interaction: ChatInputCommandInteraction<T>;
 };
 
-type CollectionFetcher = <T extends Document>(name: string, options: MongoCollectionOptions) => Promise<Collection<T>>;
+export type CollectionFetcher = <T extends Document>(name: string, options: MongoCollectionOptions) => Promise<Collection<T>>;
 
 export type BotClient = { readonly client: Client; readonly globalLogger: Logger; readonly fetchCollection: CollectionFetcher };
 
