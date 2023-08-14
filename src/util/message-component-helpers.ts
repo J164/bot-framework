@@ -11,7 +11,7 @@ import {
 } from 'discord.js';
 import { Emojis } from './response-helpers.js';
 
-export const enum DestinationType {
+export enum DestinationType {
 	InteractionEditReply,
 	TextChannelSend,
 }

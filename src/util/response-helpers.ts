@@ -1,7 +1,7 @@
 import { type APIEmbed, type BaseMessageOptions } from 'discord.js';
 
 /** Enum of embed format types */
-export const enum EmbedType {
+export enum EmbedType {
 	Info,
 	Error,
 	Success,
@@ -10,7 +10,7 @@ export const enum EmbedType {
 }
 
 /** Enum of Discord emojis */
-export const enum Emojis {
+export enum Emojis {
 	Document = '\uD83D\uDCC4',
 	RedX = '\u274C',
 	GreenCheckMark = '\u2705',
@@ -22,7 +22,7 @@ export const enum Emojis {
 }
 
 /** Enum of colors */
-export const enum BotColors {
+export enum BotColors {
 	DefaultBlue = 0x00_99_ff,
 	ErrorRed = 0xff_00_00,
 	SuccessGreen = 0x00_ff_00,
