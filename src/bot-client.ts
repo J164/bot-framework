@@ -8,8 +8,10 @@ import {
 } from 'discord.js';
 import { pino, type Logger } from 'pino';
 import { type ScheduledTask, type ScheduleOptions } from 'node-cron';
+import { MongoClient, type Document, type Collection } from 'mongodb';
 import { onReady } from './event-handlers/ready.js';
 import { onInteractionCreate } from './event-handlers/interaction-create.js';
+import { type MongoCollectionOptions, fetchCollection } from './database.js';
 
 export type Task = {
 	readonly cronExpression: string;
@@ -36,17 +38,37 @@ export type ChatInputCommand<T extends CacheType> = Omit<InteractionResponse, 'i
 	interaction: ChatInputCommandInteraction<T>;
 };
 
-export type BotClient = { readonly client: Client; readonly globalLogger: Logger };
+type CollectionFetcher = <T extends Document>(name: string, options: MongoCollectionOptions) => Promise<Collection<T>>;
+
+export type BotClient = { readonly client: Client; readonly globalLogger: Logger; readonly fetchCollection: CollectionFetcher };
 
 export async function startBot(options: {
 	token: string;
 	clientOptions: ClientOptions;
+	databaseUrl: string;
 	commandHandlers: ApplicationCommandHandlers;
 	taskHandlers: Task[];
 }): Promise<void> {
-	const { token, clientOptions, commandHandlers, taskHandlers } = options;
+	const { token, clientOptions, databaseUrl, commandHandlers, taskHandlers } = options;
 
-	const context: Omit<BotClient, 'client'> & { client?: Client } = { globalLogger: pino() };
+	const client = new MongoClient(databaseUrl);
+	await client.connect();
+	const db = client.db();
+
+	const context: Omit<BotClient, 'client'> & { client?: Client } = {
+		globalLogger: pino(),
+		fetchCollection: fetchCollection.bind<CollectionFetcher>({
+			client,
+			db,
+			collectionNames: await db
+				.listCollections()
+				.map((info) => {
+					return info.name;
+				})
+				.toArray(),
+			collections: {},
+		}),
+	};
 	context.client = new Client(clientOptions)
 		.once('ready', onReady.bind(context as BotClient, taskHandlers))
 		.on('interactionCreate', onInteractionCreate.bind(context as BotClient, commandHandlers));

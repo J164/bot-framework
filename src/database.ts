@@ -1,49 +1,40 @@
-import { type Collection, type CreateCollectionOptions, type IndexDescription, type Document, type Db, type CollectionOptions, MongoClient } from 'mongodb';
-
-export type CollectionFetcher = typeof fetchCollection;
+import {
+	type Collection,
+	type CreateCollectionOptions,
+	type IndexDescription,
+	type Document,
+	type Db,
+	type CollectionOptions,
+	type MongoClient,
+} from 'mongodb';
 
 type UnpromotedCollectionOptions = { readonly promoteLongs: false; readonly promoteValues: false; readonly promoteBuffers: false };
 
+/** Options to define a mongodb collection */
 export type MongoCollectionOptions = {
 	readonly baseOptions: CollectionOptions & UnpromotedCollectionOptions;
 	readonly createOptions: CreateCollectionOptions & UnpromotedCollectionOptions & { validator: Document };
 	readonly indexOptions: IndexDescription[];
 };
 
-let client: MongoClient | undefined;
-let database: Db | undefined;
-let collectionNames: string[] | undefined;
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const collections: Record<string, Collection<any>> = {};
+type Database = { client: MongoClient; db: Db; collectionNames: string[]; collections: Record<string, Collection<any>> };
 
-export async function fetchCollection<T extends Document>(name: string, url: string, options: MongoCollectionOptions): Promise<Collection<T>> {
-	if (!database || !collectionNames) {
-		client ??= new MongoClient(url);
-		await client.connect();
-		database ??= client.db();
-		collectionNames = await database
-			.listCollections()
-			.map((info) => {
-				return info.name;
-			})
-			.toArray();
-	}
-
+export async function fetchCollection<T extends Document>(this: Database, name: string, options: MongoCollectionOptions): Promise<Collection<T>> {
 	const { baseOptions, createOptions, indexOptions } = options;
 
-	return (collections[name] ??= collectionNames.includes(name)
-		? database.collection<T>(name, baseOptions)
-		: await createCollection<T>(name, database, createOptions, indexOptions));
+	return (this.collections[name] ??= this.collectionNames.includes(name)
+		? this.db.collection<T>(name, baseOptions)
+		: await createCollection<T>(name, this.db, createOptions, indexOptions));
 }
 
 async function createCollection<T extends Document>(
 	name: string,
-	database: Db,
+	db: Db,
 	createOptions: CreateCollectionOptions,
 	indexOptions: IndexDescription[],
 ): Promise<Collection<T>> {
-	const collection = await database.createCollection<T>(name, createOptions);
+	const collection = await db.createCollection<T>(name, createOptions);
 
 	if (indexOptions.length > 0) {
 		await collection.createIndexes(indexOptions);
