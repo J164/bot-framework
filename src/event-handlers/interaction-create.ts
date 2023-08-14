@@ -1,6 +1,5 @@
 import { type CacheType, type ChatInputCommandInteraction, type Interaction } from 'discord.js';
 import { EmbedType, responseOptions } from '../util/response-helpers.js';
-import { fetchCollection } from '../database.js';
 import { type CommandContext, type ApplicationCommandHandlers, type BotClient, type ChatInputCommand } from '../bot-client.js';
 
 export async function onInteractionCreate(this: BotClient, handlers: ApplicationCommandHandlers, interaction: Interaction): Promise<void> {
@@ -27,7 +26,7 @@ async function handleChatInputCommand(interaction: ChatInputCommandInteraction, 
 		options: interaction.options,
 	});
 
-	const context: CommandContext = { botClient: client, commandLogger, fetchCollection };
+	const context: CommandContext = { botClient: client, commandLogger };
 
 	if (!handler.allowedInDm) {
 		if (!interaction.inCachedGuild()) {

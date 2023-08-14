@@ -10,7 +10,6 @@ import { pino, type Logger } from 'pino';
 import { type ScheduledTask, type ScheduleOptions } from 'node-cron';
 import { onReady } from './event-handlers/ready.js';
 import { onInteractionCreate } from './event-handlers/interaction-create.js';
-import { type CollectionFetcher } from './database.js';
 
 export type Task = {
 	readonly cronExpression: string;
@@ -30,8 +29,8 @@ export type ChatInputCommandHandler<AllowedInDm extends boolean> = {
 export type ApplicationCommandHandler = ChatInputCommandHandler<boolean>;
 export type ApplicationCommandHandlers = Record<string, ApplicationCommandHandler>;
 
-export type TaskContext = { readonly botClient: BotClient; readonly task: ScheduledTask; readonly fetchCollection: CollectionFetcher };
-export type CommandContext = { readonly botClient: BotClient; readonly commandLogger: Logger; readonly fetchCollection: CollectionFetcher };
+export type TaskContext = { readonly botClient: BotClient; readonly task: ScheduledTask; readonly taskLogger: Logger };
+export type CommandContext = { readonly botClient: BotClient; readonly commandLogger: Logger };
 
 export type ChatInputCommand<T extends CacheType> = Omit<InteractionResponse, 'interaction'> & {
 	interaction: ChatInputCommandInteraction<T>;
