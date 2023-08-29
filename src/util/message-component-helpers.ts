@@ -1,24 +1,10 @@
-import {
-	type ChatInputCommandInteraction,
-	type TextBasedChannel,
-	ComponentType,
-	ButtonStyle,
-	type BaseMessageOptions,
-	type APIEmbed,
-	type Message,
-	type APIEmbedField,
-	type APISelectMenuOption,
-} from 'discord.js';
+import { ComponentType, ButtonStyle, type BaseMessageOptions, type APIEmbed, type Message, type APIEmbedField, type APISelectMenuOption } from 'discord.js';
 import { Emojis } from './response-helpers.js';
 
 export enum DestinationType {
 	InteractionEditReply,
 	TextChannelSend,
 }
-
-type Destination =
-	| { readonly type: DestinationType.InteractionEditReply; readonly interaction: ChatInputCommandInteraction }
-	| { readonly type: DestinationType.TextChannelSend; readonly channel: TextBasedChannel };
 
 type PaginationComponent = {
 	type: ComponentType.ActionRow;
@@ -82,7 +68,7 @@ type PaginatedMessageOptions = Omit<BaseMessageOptions, 'embeds' | 'components'>
 };
 
 export async function sendPaginatedMessage(
-	destination: Destination,
+	sendMessage: (options: BaseMessageOptions) => Promise<Message>,
 	embed: APIEmbed,
 	options: { selectable?: boolean } = {},
 	messageOptions: BaseMessageOptions = {},
@@ -94,7 +80,7 @@ export async function sendPaginatedMessage(
 	const singlePage = !fields || fields.length <= 25;
 
 	if (singlePage && !options.selectable) {
-		await sendMessage(destination, messageOptions);
+		await sendMessage(messageOptions);
 		return;
 	}
 
@@ -167,7 +153,7 @@ export async function sendPaginatedMessage(
 		} satisfies SelectComponent);
 	}
 
-	return startPagination(await sendMessage(destination, messageOptions), messageOptions as PaginatedMessageOptions, fields);
+	return startPagination(await sendMessage(messageOptions), messageOptions as PaginatedMessageOptions, fields);
 }
 
 async function startPagination(message: Message, options: PaginatedMessageOptions, fields?: APIEmbedField[]): Promise<string[] | undefined> {
@@ -256,17 +242,5 @@ async function startPagination(message: Message, options: PaginatedMessageOption
 
 		// eslint-disable-next-line no-await-in-loop
 		await interaction.update(options);
-	}
-}
-
-async function sendMessage(destination: Destination, options: BaseMessageOptions): Promise<Message> {
-	switch (destination.type) {
-		case DestinationType.InteractionEditReply: {
-			return destination.interaction.editReply(options);
-		}
-
-		case DestinationType.TextChannelSend: {
-			return destination.channel.send(options);
-		}
 	}
 }
